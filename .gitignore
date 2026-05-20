@@ -38,6 +38,7 @@ env/
 
 # Project specific
 outputs/
+.workbuddy/
 *.log
 .pytest_cache/
 

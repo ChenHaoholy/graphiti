@@ -6,6 +6,22 @@
 [![Neo4j](https://img.shields.io/badge/Neo4j-5.x-green.svg)](https://neo4j.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+## 常用命令
+
+```bash
+# 1. 增量构建/更新图谱，并自动生成社区摘要
+python -m src.build
+
+# 2. 问答：系统会自动判断是普通回答还是局势预测
+python -m src.ask "你的问题"
+
+# 3. 只抓取 GDELT 数据到 data/events.jsonl，不写入图谱
+python -m src.fetch_gdelt --days 7 --limit 20
+
+# 4. 兼容旧入口，等价于 python -m src.build
+python -m src.update_graph
+```
+
 ---
 
 ## 📋 目录
@@ -117,10 +133,10 @@ docker run --name graphiti-neo4j \
 
 ```bash
 # 从本地文件更新
-python -m src.update_graph --source data/events.jsonl
+python -m src.build
 
 # 从 GDELT 抓取最新新闻
-python -m src.update_graph --source gdelt --days 14 --limit 50
+python -m src.fetch_gdelt --days 14 --limit 50
 ```
 
 ### 6. 开始提问
@@ -137,15 +153,14 @@ python -m src.ask "未来30天美伊冲突会升级吗？"
 
 ```bash
 # 基本用法
-python -m src.update_graph --source data/events.jsonl
+python -m src.build
 
 # GDELT 实时抓取
-python -m src.update_graph --source gdelt --days 14 --limit 50
+python -m src.fetch_gdelt --days 14 --limit 50
 
-# 参数说明
-# --source    数据源：gdelt 或本地文件路径
-# --days      GDELT 抓取天数（默认 14）
-# --limit     最大事件数（默认 50）
+# 常用参数
+# src.build: --events 指定 JSONL；--no-communities 跳过社区摘要
+# src.fetch_gdelt: --days 抓取天数；--limit 每个 query 最大文章数
 ```
 
 ### 提问命令

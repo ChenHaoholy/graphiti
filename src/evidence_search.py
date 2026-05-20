@@ -1,6 +1,3 @@
-import argparse
-import asyncio
-import json
 from datetime import datetime, timezone
 from typing import Any
 
@@ -9,12 +6,11 @@ from graphiti_core.search.search_filters import ComparisonOperator, DateFilter, 
 try:
     from .graphiti_client import get_graphiti_client
     from .schema import EvidenceItem
+    from .constants import DEFAULT_GROUP_ID
 except ImportError:
     from graphiti_client import get_graphiti_client
     from schema import EvidenceItem
-
-
-DEFAULT_GROUP_ID = "us-iran-conflict"
+    from constants import DEFAULT_GROUP_ID
 
 
 def parse_time(value: str | None) -> datetime | None:
@@ -229,31 +225,3 @@ async def search_evidence(
     finally:
         if owns_client:
             await graphiti.close()
-
-
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Search Graphiti evidence for US-Iran conflict.")
-    parser.add_argument("--query", help="Keyword query, for example: Iran sanctions")
-    parser.add_argument("--actor", help="Simple actor filter, for example: IAEA")
-    parser.add_argument("--event-type", help="Simple event type filter, for example: diplomacy")
-    parser.add_argument("--start-time", help="UTC ISO start time, for example: 2025-04-15T00:00:00Z")
-    parser.add_argument("--end-time", help="UTC ISO end time, for example: 2025-04-20T00:00:00Z")
-    parser.add_argument("--limit", type=int, default=5, help="Maximum number of evidence items")
-    return parser.parse_args()
-
-
-async def main() -> None:
-    args = parse_args()
-    items = await search_evidence(
-        query=args.query,
-        actor=args.actor,
-        event_type=args.event_type,
-        start_time=args.start_time,
-        end_time=args.end_time,
-        limit=args.limit,
-    )
-    print(json.dumps([item.model_dump() for item in items], ensure_ascii=False, indent=2))
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
